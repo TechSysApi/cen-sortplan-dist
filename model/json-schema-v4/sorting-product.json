@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {},
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the sorting product. "
+    },
+    "specialSorts": {
+      "type": "array",
+      "items": {
+        "$ref": "special-sort.json"
+      },
+      "description": "Special logistics and technical destinations. Typical examples are “REJECT” or “OVERFLOW”."
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "additionalProperties": false,
+  "description": "Sorting product describes \"what the machine produces\". This is typically the content of an Outlet. \nThe sorting product can be are logistics destinations and special sorts",
+  "id": "SortingProduct"
+}
