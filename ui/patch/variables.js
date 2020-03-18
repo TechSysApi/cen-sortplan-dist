@@ -1,6 +1,6 @@
 var variables={
   "name": "@ch-post/cen-sortplan-stream-api",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "API definition - Sortplan S65-1",
   "scripts": {
     "start": "apikana start src dist",
