@@ -57,7 +57,9 @@
                     "DIMENSION_ERROR",
                     "WEIGHT_ERROR",
                     "SORTPLAN_ERROR",
-                    "DIRECT_SORTING_MODE"
+                    "DIRECT_SORTING_MODE",
+                    "ITEM_NO_SORTCODE",
+                    "OUTLET_MISSED"
                   ],
                   "id": "SortReason"
                 }

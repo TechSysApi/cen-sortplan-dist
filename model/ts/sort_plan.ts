@@ -104,6 +104,8 @@ export enum OutletArea {
  * - WEIGHT_ERROR: Item too heavy. The parcel was discharge, because of weight exceed.
  * - SORTPLAN_ERROR: Sortplan error. 
  * - DIRECT_SORTING_MODE: Item sorted by the direct sorting mode. 
+ * - ITEM_NO_SORTCODE: No sortcode has been received for this item. 
+ * - OUTLET_MISSED: Sortcode has been updated (push or repetitive requests), physical outlet already passed.
  */
 export enum SortReason {
     UNKNOWN,
@@ -126,7 +128,9 @@ export enum SortReason {
     DIMENSION_ERROR,
     WEIGHT_ERROR,
     SORTPLAN_ERROR,
-    DIRECT_SORTING_MODE
+    DIRECT_SORTING_MODE,
+    ITEM_NO_SORTCODE,
+    OUTLET_MISSED
 }
 
 /**
