@@ -7,7 +7,7 @@
       "name": "Kay Herzam (Swiss Post)",
       "email": "kay.herzam@post.ch"
     },
-    "version": "1.1.6"
+    "version": "1.1.7"
   },
   "host": "server:8080",
   "basePath": "mqtt",

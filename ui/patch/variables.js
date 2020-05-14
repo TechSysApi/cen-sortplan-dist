@@ -1,6 +1,6 @@
 var variables={
   "name": "@ch-post/cen-sortplan-stream-api",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "API definition - Sortplan S65-1",
   "scripts": {
     "start": "apikana start src dist",
@@ -19,7 +19,7 @@ var variables={
     "type": "stream-api",
     "domain": "post.ch",
     "author": "herzamk",
-    "namespace": "cen.sortplan",
+    "namespace": "app.techsys.cen.sortplan",
     "shortName": "cen-sortplan",
     "projectName": "cen-sortplan-stream-api",
     "npmPackage": "@ch-post/cen-sortplan-stream-api",
