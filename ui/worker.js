@@ -21,5 +21,4 @@ document.appendChild = function(child) {return child;};
 importScripts("patch/browserify.js");
 onmessage = function(message) {
     var models = message .data;
-    postMessage(schemaGen.generate(models[0].substring(0, models[0].lastIndexOf('/')) + '/tsconfig.json', models));
 }
