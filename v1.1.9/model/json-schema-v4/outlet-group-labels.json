@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {},
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "description": "The date+timstamp which identifies the point in time, where the information was generated, including milliseconds.",
+      "format": "date-time"
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the outlet group labels table\nFormat: [tablename.key.timestamp]+.scenario.time\nExample: VZTAB.201325.20180709135826.SPECIALVZ.202119.20190306133531.3.2",
+      "maxLength": 100
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "action.json"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "timestamp",
+    "name",
+    "actions"
+  ],
+  "additionalProperties": false,
+  "id": "OutletGroupLabels"
+}

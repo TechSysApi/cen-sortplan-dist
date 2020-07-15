@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-03/schema#",
+  "definitions": {},
+  "type": "object",
+  "properties": {
+    "location": {
+      "$ref": "location-type.json",
+      "description": "Specifies the print Location i.e. where action is performed. Typical locations\nare Label-Printer or Display.",
+      "required": true
+    },
+    "format": {
+      "type": "string",
+      "description": "Text zur Anzeige auf dem Display der Endstelle\nBeispiele: Bezirk/Tour, Plz, Rx-Stellplatz, Zielzentrum",
+      "maxLength": 20,
+      "required": true
+    }
+  },
+  "additionalProperties": false,
+  "description": "Describes what shall be printed on a label or a display for mail\nitems that fall into a given Product.",
+  "id": "Print"
+}
