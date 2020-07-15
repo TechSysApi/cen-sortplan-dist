@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-03/schema#",
+  "definitions": {},
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "integer",
+      "description": "A unique key inside the sort plan to identify this occurrence of OutletGroup.\nBezeichnung für eine Gruppe der Endstellen. Dateninhalt ist das Virtuelle Ziel. Das virtuelle Ziel ist eine 3-stellige Zahl.",
+      "maxLength": 3,
+      "required": true
+    },
+    "tray": {
+      "type": "integer",
+      "description": "Tray number. Feld nur relevant, wenn mehrere Sorter eingesetzt werden. \nNummer vom Sorter. Feld nur relevant, wenn mehrere Sorter eingesetzt werden. ",
+      "minimum": 1
+    },
+    "specialType": {
+      "$ref": "outlet-area.json",
+      "description": "Defines the usage made of the outlet group. "
+    },
+    "outlets": {
+      "type": "array",
+      "items": {
+        "$ref": "outlet.json"
+      },
+      "description": "The list of physical outlets to be used.",
+      "minItems": 1,
+      "maxItems": 6,
+      "required": true
+    }
+  },
+  "additionalProperties": false,
+  "description": "Groupings of physical outlets for each sequencing pass.",
+  "id": "OutletGroup"
+}
