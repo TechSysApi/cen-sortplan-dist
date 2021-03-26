@@ -1,0 +1,108 @@
+{
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "description": "The date+timstamp which identifies the point in time, where the information was generated, including milliseconds.",
+      "format": "date-time"
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the outlet group labels table\nFormat: [tablename.key.timestamp]+.scenario.time\nExample: VZTAB.201325.20180709135826.SPECIALVZ.202119.20190306133531.3.2",
+      "maxLength": 100
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Action"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "timestamp",
+    "name",
+    "actions"
+  ],
+  "additionalProperties": false,
+  "id": "OutletGroupLabels",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "Action": {
+      "type": "object",
+      "properties": {
+        "sortingProduct": {
+          "type": "string"
+        },
+        "sorts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Sort"
+          }
+        },
+        "prints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Print"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "description": "Maps a product to an action.",
+      "id": "Action"
+    },
+    "Sort": {
+      "type": "object",
+      "properties": {
+        "outletGroup": {
+          "type": "integer",
+          "description": "A reference on the name of the outlet group.\nDas Virtuelle Ziel fasst eine Liste von Endstellen zu einem logischen Sortierziel, auch Endstellengruppe genannt, zusammen.",
+          "maxLength": 3
+        },
+        "position": {
+          "type": "integer",
+          "description": "Die Endstellen-Position dient zum Positionieren der Anzeige auf dem Display der Endstelle und hat die Bedeutung des Rx-Stellplatzes an der Endstelle.\nDie Endstellen-Position ist eine bis zu einstellige positive Zahl. Eine Endstellengruppe hat max. neun Positionen.",
+          "minimum": 1,
+          "maxLength": 1
+        }
+      },
+      "required": [
+        "outletGroup"
+      ],
+      "additionalProperties": false,
+      "description": "Sort/sequence this product to an OutletGroup. For dynamic outletGroups\nspecify the relative position withing Group",
+      "id": "Sort"
+    },
+    "Print": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "$ref": "#/definitions/LocationType",
+          "description": "Specifies the print Location i.e. where action is performed. Typical locations\nare Label-Printer or Display."
+        },
+        "format": {
+          "type": "string",
+          "description": "Text zur Anzeige auf dem Display der Endstelle\nBeispiele: Bezirk/Tour, Plz, Rx-Stellplatz, Zielzentrum",
+          "maxLength": 20
+        }
+      },
+      "required": [
+        "location",
+        "format"
+      ],
+      "additionalProperties": false,
+      "description": "Describes what shall be printed on a label or a display for mail\nitems that fall into a given Product.",
+      "id": "Print"
+    },
+    "LocationType": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "LABEL_PRINTER",
+        "DISPLAY"
+      ],
+      "description": "Defines the print location.\n- UNKNOWN: Default enum value to map not supported values.\n- LABEL_PRINTER: the label printer\n- DISPLAY: the display",
+      "id": "LocationType"
+    }
+  }
+}

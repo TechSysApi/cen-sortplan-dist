@@ -1,0 +1,388 @@
+swagger: 2
+info:
+  title: 'CEN Sortplan'
+  description: 'The API is used to deploy (parts of) the sort plan based on the "open standard interfaces" from CEN to the sorting machine. Not that this API implements a push based message distribution, i.e. the messages are published on changes and retained/cached by the broker.'
+  contact:
+    name: 'Kay Herzam (Swiss Post)'
+    email: kay.herzam@post.ch
+  version: 2.0.1
+host: 'server:8080'
+basePath: mqtt
+paths:
+  'cen-sortplan/v1/control/outlet-group-labels/{srcSystem}/{srcInstance}':
+    post:
+      summary: '🔂[RETAINED] ATG-1 Receive outlet group labels (Zielbezeichnungsdaten empfangen)'
+      description: 'GER-TODO Für die Beschriftung der Endstellen werden für die Anzeige benötigten Daten in Form einer Liste von Endstellentabelleneinträgen verwaltet. Änderungen an den Zielbezeichnungsdaten werden im push-Modus publiziert.'
+      tags:
+        - control
+      parameters:
+        -
+          name: srcSystem
+          in: path
+          description: '3-letter uppercase name identifying the system issuing the response'
+          type: string
+          default: MDS
+        -
+          name: srcInstance
+          in: path
+          description: 'two-digit padded number identifying the system instance issuing the response'
+          type: string
+          default: '01'
+      responses:
+        default:
+          schema: {$ref: '#/definitions/OutletGroupLabels'}
+  'cen-sortplan/v1/control/outlet-table/{srcSystem}/{srcInstance}':
+    post:
+      summary: '🔂[RETAINED] ATG-2 Distribute and activate outlet table (Zieltabelle verteilen und aktivieren )'
+      description: 'GER-TODO Die Zieltabelle wird vom Sortierdaten-Editor an den AT-Gateway publiziert, der diese Daten an den Subscriber Anzeige-Server weiterleitet. Änderungen an der Zieltabelle werden im push-Modus publiziert.'
+      tags:
+        - control
+      parameters:
+        -
+          name: srcSystem
+          in: path
+          description: '3-letter uppercase name identifying the system issuing the response'
+          type: string
+          default: MDS
+        -
+          name: srcInstance
+          in: path
+          description: 'two-digit padded number identifying the system instance issuing the response'
+          type: string
+          default: '01'
+      responses:
+        default:
+          schema: {$ref: '#/definitions/OutletTable'}
+  'cen-sortplan/v1/control/special-sort-table/{srcSystem}/{srcInstance}':
+    post:
+      summary: '🔂[RETAINED] ATG-2 Distribute and activate outlet table (SPECIALVZ verteilen und aktivieren )'
+      description: 'GER-TODO Die Zieltabelle wird vom Sortierdaten-Editor an den AT-Gateway publiziert, der diese Daten an den Subscriber Anzeige-Server weiterleitet. Änderungen an der SPECIALVZ werden im push-Modus publiziert.'
+      tags:
+        - control
+      parameters:
+        -
+          name: srcSystem
+          in: path
+          description: '3-letter uppercase name identifying the system issuing the response'
+          type: string
+          default: MDS
+        -
+          name: srcInstance
+          in: path
+          description: 'two-digit padded number identifying the system instance issuing the response'
+          type: string
+          default: '01'
+      responses:
+        default:
+          schema: {$ref: '#/definitions/SpecialSortTable'}
+definitions:
+  Action:
+    type: object
+    properties:
+      sortingProduct:
+        type: string
+      sorts:
+        type: array
+        items:
+          type: object
+          properties: {outletGroup: {type: integer, description: "A reference on the name of the outlet group.\nDas Virtuelle Ziel fasst eine Liste von Endstellen zu einem logischen Sortierziel, auch Endstellengruppe genannt, zusammen.", maxLength: 3}, position: {type: integer, description: "Die Endstellen-Position dient zum Positionieren der Anzeige auf dem Display der Endstelle und hat die Bedeutung des Rx-Stellplatzes an der Endstelle.\nDie Endstellen-Position ist eine bis zu einstellige positive Zahl. Eine Endstellengruppe hat max. neun Positionen.", minimum: 1, maxLength: 1}}
+          required: [outletGroup]
+          additionalProperties: false
+          description: "Sort/sequence this product to an OutletGroup. For dynamic outletGroups\nspecify the relative position withing Group"
+          $ref: Sort
+      prints:
+        type: array
+        items:
+          type: object
+          properties: {location: {description: "Specifies the print Location i.e. where action is performed. Typical locations\nare Label-Printer or Display.", type: string, enum: [UNKNOWN, LABEL_PRINTER, DISPLAY], id: LocationType}, format: {type: string, description: "Text zur Anzeige auf dem Display der Endstelle\nBeispiele: Bezirk/Tour, Plz, Rx-Stellplatz, Zielzentrum", maxLength: 20}}
+          required: [location, format]
+          additionalProperties: false
+          description: "Describes what shall be printed on a label or a display for mail\nitems that fall into a given Product."
+          $ref: Print
+    additionalProperties: false
+    description: 'Maps a product to an action.'
+    $ref: Action
+  LocationType:
+    type: string
+    enum:
+      - UNKNOWN
+      - LABEL_PRINTER
+      - DISPLAY
+    description: "Defines the print location.\n- UNKNOWN: Default enum value to map not supported values.\n- LABEL_PRINTER: the label printer\n- DISPLAY: the display"
+    $ref: LocationType
+  OutletArea:
+    type: string
+    enum:
+      - UNKNOWN
+      - STD_AREA
+      - SEQ_AREA
+      - REJECT_AREA
+      - SEQ_OV_AREA
+      - MCS_AREA
+    description: "Defines the outlet area. SEQ_AREA and SEQ_OV_AREA are not used for parcel sorting.\n- UNKNOWN: Default enum value to map not supported values.\n- STD_AREA: Area used for non-sequenced mail piece;\n- SEQ_AREA: Area used for sequenced mail piece;\n- REJECT_AREA: Area for SpecialSort: application specific (ZDS.SpecialVZ) or machine specific (ASL) destinations.\n- SEQ_OV_AREA: Area for overflow stackers, typically used in the 1st pass when the mail volume is not yet precisely known. This area consists of all the remaining stackers.\n- MCS_AREA: Area for manual coding systems"
+    $ref: OutletArea
+  OutletGroupLabels:
+    type: object
+    properties:
+      timestamp:
+        type: string
+        description: 'The date+timstamp which identifies the point in time, where the information was generated, including milliseconds.'
+        format: date-time
+      name:
+        type: string
+        description: "The name of the outlet group labels table\nFormat: [tablename.key.timestamp]+.scenario.time\nExample: VZTAB.201325.20180709135826.SPECIALVZ.202119.20190306133531.3.2"
+        maxLength: 100
+      actions:
+        type: array
+        items:
+          type: object
+          properties: {sortingProduct: {type: string}, sorts: {type: array, items: {type: object, properties: {outletGroup: {type: integer, description: "A reference on the name of the outlet group.\nDas Virtuelle Ziel fasst eine Liste von Endstellen zu einem logischen Sortierziel, auch Endstellengruppe genannt, zusammen.", maxLength: 3}, position: {type: integer, description: "Die Endstellen-Position dient zum Positionieren der Anzeige auf dem Display der Endstelle und hat die Bedeutung des Rx-Stellplatzes an der Endstelle.\nDie Endstellen-Position ist eine bis zu einstellige positive Zahl. Eine Endstellengruppe hat max. neun Positionen.", minimum: 1, maxLength: 1}}, required: [outletGroup], additionalProperties: false, description: "Sort/sequence this product to an OutletGroup. For dynamic outletGroups\nspecify the relative position withing Group", $ref: Sort}}, prints: {type: array, items: {type: object, properties: {location: {description: "Specifies the print Location i.e. where action is performed. Typical locations\nare Label-Printer or Display.", type: string, enum: [UNKNOWN, LABEL_PRINTER, DISPLAY], id: LocationType}, format: {type: string, description: "Text zur Anzeige auf dem Display der Endstelle\nBeispiele: Bezirk/Tour, Plz, Rx-Stellplatz, Zielzentrum", maxLength: 20}}, required: [location, format], additionalProperties: false, description: "Describes what shall be printed on a label or a display for mail\nitems that fall into a given Product.", $ref: Print}}}
+          additionalProperties: false
+          description: 'Maps a product to an action.'
+          $ref: Action
+        minItems: 1
+    required:
+      - timestamp
+      - name
+      - actions
+    additionalProperties: false
+  OutletGroup:
+    type: object
+    properties:
+      name:
+        type: integer
+        description: "A unique key inside the sort plan to identify this occurrence of OutletGroup.\nBezeichnung für eine Gruppe der Endstellen. Dateninhalt ist das Virtuelle Ziel. Das virtuelle Ziel ist eine 3-stellige Zahl."
+        maxLength: 3
+      tray:
+        type: integer
+        description: "Tray number. Feld nur relevant, wenn mehrere Sorter eingesetzt werden.\nNummer vom Sorter. Feld nur relevant, wenn mehrere Sorter eingesetzt werden."
+        minimum: 1
+      specialType:
+        description: 'Defines the usage made of the outlet group.'
+        type: string
+        enum:
+          - UNKNOWN
+          - STD_AREA
+          - SEQ_AREA
+          - REJECT_AREA
+          - SEQ_OV_AREA
+          - MCS_AREA
+        id: OutletArea
+      outlets:
+        type: array
+        items:
+          type: object
+          properties: {name: {type: integer, description: 'The name of the outlet.', maxLength: 4}, priority: {type: integer, description: "Priority of the outlet. Defaults to 1=Highest Priority.\n\nIf multiple outlets have the same priority, round robin is applied. Lower priority outlets are only used\nwhen higher priority outlets are full.", maxLength: 2}}
+          required: [name]
+          additionalProperties: false
+          description: 'Physical outlet.'
+          $ref: Outlet
+        description: 'The list of physical outlets to be used.'
+        minItems: 1
+        maxItems: 6
+    required:
+      - name
+      - outlets
+    additionalProperties: false
+    description: 'Groupings of physical outlets for each sequencing pass.'
+    $ref: OutletGroup
+  OutletTable:
+    type: object
+    properties:
+      timestamp:
+        type: string
+        description: 'The date+timstamp which identifies the point in time, where the information was generated, including milliseconds.'
+        format: date-time
+      name:
+        type: string
+        description: "The name of the outlet table.\nFormat: [tablename.key.timestamp]+\nExample: ZIELTAB.201446.20180222100409"
+        maxLength: 100
+      outletGroups:
+        type: array
+        items:
+          type: object
+          properties: {name: {type: integer, description: "A unique key inside the sort plan to identify this occurrence of OutletGroup.\nBezeichnung für eine Gruppe der Endstellen. Dateninhalt ist das Virtuelle Ziel. Das virtuelle Ziel ist eine 3-stellige Zahl.", maxLength: 3}, tray: {type: integer, description: "Tray number. Feld nur relevant, wenn mehrere Sorter eingesetzt werden.\nNummer vom Sorter. Feld nur relevant, wenn mehrere Sorter eingesetzt werden.", minimum: 1}, specialType: {description: 'Defines the usage made of the outlet group.', type: string, enum: [UNKNOWN, STD_AREA, SEQ_AREA, REJECT_AREA, SEQ_OV_AREA, MCS_AREA], id: OutletArea}, outlets: {type: array, items: {type: object, properties: {name: {type: integer, description: 'The name of the outlet.', maxLength: 4}, priority: {type: integer, description: "Priority of the outlet. Defaults to 1=Highest Priority.\n\nIf multiple outlets have the same priority, round robin is applied. Lower priority outlets are only used\nwhen higher priority outlets are full.", maxLength: 2}}, required: [name], additionalProperties: false, description: 'Physical outlet.', $ref: Outlet}, description: 'The list of physical outlets to be used.', minItems: 1, maxItems: 6}}
+          required: [name, outlets]
+          additionalProperties: false
+          description: 'Groupings of physical outlets for each sequencing pass.'
+          $ref: OutletGroup
+    required:
+      - timestamp
+      - name
+      - outletGroups
+    additionalProperties: false
+  Outlet:
+    type: object
+    properties:
+      name:
+        type: integer
+        description: 'The name of the outlet.'
+        maxLength: 4
+      priority:
+        type: integer
+        description: "Priority of the outlet. Defaults to 1=Highest Priority.\n\nIf multiple outlets have the same priority, round robin is applied. Lower priority outlets are only used\nwhen higher priority outlets are full."
+        maxLength: 2
+    required:
+      - name
+    additionalProperties: false
+    description: 'Physical outlet.'
+    $ref: Outlet
+  Print:
+    type: object
+    properties:
+      location:
+        description: "Specifies the print Location i.e. where action is performed. Typical locations\nare Label-Printer or Display."
+        type: string
+        enum:
+          - UNKNOWN
+          - LABEL_PRINTER
+          - DISPLAY
+        id: LocationType
+      format:
+        type: string
+        description: "Text zur Anzeige auf dem Display der Endstelle\nBeispiele: Bezirk/Tour, Plz, Rx-Stellplatz, Zielzentrum"
+        maxLength: 20
+    required:
+      - location
+      - format
+    additionalProperties: false
+    description: "Describes what shall be printed on a label or a display for mail\nitems that fall into a given Product."
+    $ref: Print
+  SortReason:
+    type: string
+    enum:
+      - UNKNOWN
+      - OK
+      - MAX_RECIRCULATION
+      - ITEM_NO_READ
+      - ITEM_MULTIPLE_READ
+      - SCANNER_TIMEOUT
+      - ITEM_STRAY
+      - ITEM_INDUCTION_ERROR
+      - ITEM_DISCHARGE_ERROR
+      - ITEM_ERROR
+      - ITEM_TRACKING_ERROR
+      - ITEM_OCCUPIED_TWICE_ERROR
+      - ITEM_DISAPPEARED
+      - OUTLET_NOT_AVAILABLE
+      - OUTLET_UNKNOWN
+      - UNDEFINED_ERROR
+      - NO_CAPACITY
+      - DIMENSION_ERROR
+      - WEIGHT_ERROR
+      - SORTPLAN_ERROR
+      - DIRECT_SORTING_MODE
+      - ITEM_NO_SORTCODE
+      - OUTLET_MISSED
+    description: "Defines the machine specific sort reasons.\nList of values:\n- UNKNOWN: Default enum value to map not supported values.\n- OK: Discharge OK. This describes just a \"regular\" item\n- MAX_RECIRCULATION: Item has reached the max allowed amount of recirculations.\n- ITEM_NO_READ: Item has reached the max allowed amount of scans and the last attempt was a no read.\n- ITEM_MULTIPLE_READ: Multiple national or international id barcodes could be identified.\n- SCANNER_TIMEOUT: Item has reached the max allowed amount of scans and the last attempt was a \"no answer\" from scanner.\n- ITEM_STRAY: Stray item detected.\n- ITEM_INDUCTION_ERROR: Induction error item detected (occupied twice, wrong tray).\n- ITEM_DISCHARGE_ERROR: Discharge faults.\n- ITEM_ERROR: Item has a Logical error.\n- ITEM_TRACKING_ERROR: item was inducted with tracking fault.\n- ITEM_OCCUPIED_TWICE_ERROR: item was inducted on occupied tray.\n- ITEM_DISAPPEARED: The parcel was lost at unknown location.\n- OUTLET_NOT_AVAILABLE: No available chute could be found.\n- OUTLET_UNKNOWN: Logical destination not defined.\n- UNDEFINED_ERROR: Internal error happened.\n- NO_CAPACITY: The destination outlet has no more capacity.\n- DIMENSION_ERROR: Item oversize. The parcel was discharge, because of dimension exceed.\n- WEIGHT_ERROR: Item too heavy. The parcel was discharge, because of weight exceed.\n- SORTPLAN_ERROR: Sortplan error.\n- DIRECT_SORTING_MODE: Item sorted by the direct sorting mode.\n- ITEM_NO_SORTCODE: No sortcode has been received for this item.\n- OUTLET_MISSED: Sortcode has been updated (push or repetitive requests), physical outlet already passed."
+    $ref: SortReason
+  Sort:
+    type: object
+    properties:
+      outletGroup:
+        type: integer
+        description: "A reference on the name of the outlet group.\nDas Virtuelle Ziel fasst eine Liste von Endstellen zu einem logischen Sortierziel, auch Endstellengruppe genannt, zusammen."
+        maxLength: 3
+      position:
+        type: integer
+        description: "Die Endstellen-Position dient zum Positionieren der Anzeige auf dem Display der Endstelle und hat die Bedeutung des Rx-Stellplatzes an der Endstelle.\nDie Endstellen-Position ist eine bis zu einstellige positive Zahl. Eine Endstellengruppe hat max. neun Positionen."
+        minimum: 1
+        maxLength: 1
+    required:
+      - outletGroup
+    additionalProperties: false
+    description: "Sort/sequence this product to an OutletGroup. For dynamic outletGroups\nspecify the relative position withing Group"
+    $ref: Sort
+  SortingProduct:
+    type: object
+    properties:
+      name:
+        type: string
+        description: 'The name of the sorting product.'
+      specialSorts:
+        type: array
+        items:
+          type: object
+          properties: {name: {description: 'The name of the special sort.', type: string, enum: [UNKNOWN, OK, MAX_RECIRCULATION, ITEM_NO_READ, ITEM_MULTIPLE_READ, SCANNER_TIMEOUT, ITEM_STRAY, ITEM_INDUCTION_ERROR, ITEM_DISCHARGE_ERROR, ITEM_ERROR, ITEM_TRACKING_ERROR, ITEM_OCCUPIED_TWICE_ERROR, ITEM_DISAPPEARED, OUTLET_NOT_AVAILABLE, OUTLET_UNKNOWN, UNDEFINED_ERROR, NO_CAPACITY, DIMENSION_ERROR, WEIGHT_ERROR, SORTPLAN_ERROR, DIRECT_SORTING_MODE, ITEM_NO_SORTCODE, OUTLET_MISSED], id: SortReason}}
+          required: [name]
+          additionalProperties: false
+          description: 'Special logistics and technical destinations. Typical examples are “REJECT” or “OVERFLOW”.'
+          $ref: SpecialSort
+        description: 'Special logistics and technical destinations. Typical examples are “REJECT” or “OVERFLOW”.'
+    required:
+      - name
+    additionalProperties: false
+    description: "Sorting product describes \"what the machine produces\". This is typically the content of an Outlet.\nThe sorting product can be are logistics destinations and special sorts"
+    $ref: SortingProduct
+  SpecialSortTable:
+    type: object
+    properties:
+      timestamp:
+        type: string
+        description: 'The date+timstamp which identifies the point in time, where the information was generated, including milliseconds.'
+        format: date-time
+      name:
+        type: string
+        description: "The name of the special sort table\nFormat: tablename.key.timestamp\nExample: SPECIALVZ.201446.20180222100409"
+        maxLength: 40
+      sortingProducts:
+        type: array
+        items:
+          type: object
+          properties: {name: {type: string, description: 'The name of the sorting product.'}, specialSorts: {type: array, items: {type: object, properties: {name: {description: 'The name of the special sort.', type: string, enum: [UNKNOWN, OK, MAX_RECIRCULATION, ITEM_NO_READ, ITEM_MULTIPLE_READ, SCANNER_TIMEOUT, ITEM_STRAY, ITEM_INDUCTION_ERROR, ITEM_DISCHARGE_ERROR, ITEM_ERROR, ITEM_TRACKING_ERROR, ITEM_OCCUPIED_TWICE_ERROR, ITEM_DISAPPEARED, OUTLET_NOT_AVAILABLE, OUTLET_UNKNOWN, UNDEFINED_ERROR, NO_CAPACITY, DIMENSION_ERROR, WEIGHT_ERROR, SORTPLAN_ERROR, DIRECT_SORTING_MODE, ITEM_NO_SORTCODE, OUTLET_MISSED], id: SortReason}}, required: [name], additionalProperties: false, description: 'Special logistics and technical destinations. Typical examples are “REJECT” or “OVERFLOW”.', $ref: SpecialSort}, description: 'Special logistics and technical destinations. Typical examples are “REJECT” or “OVERFLOW”.'}}
+          required: [name]
+          additionalProperties: false
+          description: "Sorting product describes \"what the machine produces\". This is typically the content of an Outlet.\nThe sorting product can be are logistics destinations and special sorts"
+          $ref: SortingProduct
+        minItems: 1
+      actions:
+        type: array
+        items:
+          type: object
+          properties: {sortingProduct: {type: string}, sorts: {type: array, items: {type: object, properties: {outletGroup: {type: integer, description: "A reference on the name of the outlet group.\nDas Virtuelle Ziel fasst eine Liste von Endstellen zu einem logischen Sortierziel, auch Endstellengruppe genannt, zusammen.", maxLength: 3}, position: {type: integer, description: "Die Endstellen-Position dient zum Positionieren der Anzeige auf dem Display der Endstelle und hat die Bedeutung des Rx-Stellplatzes an der Endstelle.\nDie Endstellen-Position ist eine bis zu einstellige positive Zahl. Eine Endstellengruppe hat max. neun Positionen.", minimum: 1, maxLength: 1}}, required: [outletGroup], additionalProperties: false, description: "Sort/sequence this product to an OutletGroup. For dynamic outletGroups\nspecify the relative position withing Group", $ref: Sort}}, prints: {type: array, items: {type: object, properties: {location: {description: "Specifies the print Location i.e. where action is performed. Typical locations\nare Label-Printer or Display.", type: string, enum: [UNKNOWN, LABEL_PRINTER, DISPLAY], id: LocationType}, format: {type: string, description: "Text zur Anzeige auf dem Display der Endstelle\nBeispiele: Bezirk/Tour, Plz, Rx-Stellplatz, Zielzentrum", maxLength: 20}}, required: [location, format], additionalProperties: false, description: "Describes what shall be printed on a label or a display for mail\nitems that fall into a given Product.", $ref: Print}}}
+          additionalProperties: false
+          description: 'Maps a product to an action.'
+          $ref: Action
+        minItems: 1
+    required:
+      - timestamp
+      - name
+      - sortingProducts
+      - actions
+    additionalProperties: false
+  SpecialSort:
+    type: object
+    properties:
+      name:
+        description: 'The name of the special sort.'
+        type: string
+        enum:
+          - UNKNOWN
+          - OK
+          - MAX_RECIRCULATION
+          - ITEM_NO_READ
+          - ITEM_MULTIPLE_READ
+          - SCANNER_TIMEOUT
+          - ITEM_STRAY
+          - ITEM_INDUCTION_ERROR
+          - ITEM_DISCHARGE_ERROR
+          - ITEM_ERROR
+          - ITEM_TRACKING_ERROR
+          - ITEM_OCCUPIED_TWICE_ERROR
+          - ITEM_DISAPPEARED
+          - OUTLET_NOT_AVAILABLE
+          - OUTLET_UNKNOWN
+          - UNDEFINED_ERROR
+          - NO_CAPACITY
+          - DIMENSION_ERROR
+          - WEIGHT_ERROR
+          - SORTPLAN_ERROR
+          - DIRECT_SORTING_MODE
+          - ITEM_NO_SORTCODE
+          - OUTLET_MISSED
+        id: SortReason
+    required:
+      - name
+    additionalProperties: false
+    description: 'Special logistics and technical destinations. Typical examples are “REJECT” or “OVERFLOW”.'
+    $ref: SpecialSort

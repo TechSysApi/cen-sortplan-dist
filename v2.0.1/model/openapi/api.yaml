@@ -1,0 +1,83 @@
+swagger: 2
+info:
+  title: 'CEN Sortplan'
+  description: 'The API is used to deploy (parts of) the sort plan based on the "open standard interfaces" from CEN to the sorting machine. Not that this API implements a push based message distribution, i.e. the messages are published on changes and retained/cached by the broker.'
+  contact:
+    name: 'Kay Herzam (Swiss Post)'
+    email: kay.herzam@post.ch
+  version: 2.0.1
+host: 'server:8080'
+basePath: mqtt
+paths:
+  'cen-sortplan/v1/control/outlet-group-labels/{srcSystem}/{srcInstance}':
+    post:
+      summary: '🔂[RETAINED] ATG-1 Receive outlet group labels (Zielbezeichnungsdaten empfangen)'
+      description: 'GER-TODO Für die Beschriftung der Endstellen werden für die Anzeige benötigten Daten in Form einer Liste von Endstellentabelleneinträgen verwaltet. Änderungen an den Zielbezeichnungsdaten werden im push-Modus publiziert.'
+      tags:
+        - control
+      parameters:
+        -
+          name: srcSystem
+          in: path
+          description: '3-letter uppercase name identifying the system issuing the response'
+          type: string
+          default: MDS
+        -
+          name: srcInstance
+          in: path
+          description: 'two-digit padded number identifying the system instance issuing the response'
+          type: string
+          default: '01'
+      responses:
+        default:
+          schema: {$ref: '#/definitions/OutletGroupLabels'}
+  'cen-sortplan/v1/control/outlet-table/{srcSystem}/{srcInstance}':
+    post:
+      summary: '🔂[RETAINED] ATG-2 Distribute and activate outlet table (Zieltabelle verteilen und aktivieren )'
+      description: 'GER-TODO Die Zieltabelle wird vom Sortierdaten-Editor an den AT-Gateway publiziert, der diese Daten an den Subscriber Anzeige-Server weiterleitet. Änderungen an der Zieltabelle werden im push-Modus publiziert.'
+      tags:
+        - control
+      parameters:
+        -
+          name: srcSystem
+          in: path
+          description: '3-letter uppercase name identifying the system issuing the response'
+          type: string
+          default: MDS
+        -
+          name: srcInstance
+          in: path
+          description: 'two-digit padded number identifying the system instance issuing the response'
+          type: string
+          default: '01'
+      responses:
+        default:
+          schema: {$ref: '#/definitions/OutletTable'}
+  'cen-sortplan/v1/control/special-sort-table/{srcSystem}/{srcInstance}':
+    post:
+      summary: '🔂[RETAINED] ATG-2 Distribute and activate outlet table (SPECIALVZ verteilen und aktivieren )'
+      description: 'GER-TODO Die Zieltabelle wird vom Sortierdaten-Editor an den AT-Gateway publiziert, der diese Daten an den Subscriber Anzeige-Server weiterleitet. Änderungen an der SPECIALVZ werden im push-Modus publiziert.'
+      tags:
+        - control
+      parameters:
+        -
+          name: srcSystem
+          in: path
+          description: '3-letter uppercase name identifying the system issuing the response'
+          type: string
+          default: MDS
+        -
+          name: srcInstance
+          in: path
+          description: 'two-digit padded number identifying the system instance issuing the response'
+          type: string
+          default: '01'
+      responses:
+        default:
+          schema: {$ref: '#/definitions/SpecialSortTable'}
+definitions:
+  $ref:
+    - ../ts/outlet_group_labels.ts
+    - ../ts/outlet_table.ts
+    - ../ts/sort_plan.ts
+    - ../ts/special_sort_table.ts
