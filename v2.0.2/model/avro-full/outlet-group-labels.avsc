@@ -1,0 +1,111 @@
+{
+  "namespace": "OutletGroupLabels",
+  "name": "main",
+  "type": "record",
+  "fields": [
+    {
+      "name": "timestamp",
+      "doc": "The date+timstamp which identifies the point in time, where the information was generated, including milliseconds.",
+      "type": "string"
+    },
+    {
+      "name": "name",
+      "doc": "The name of the outlet group labels table\nFormat: [tablename.key.timestamp]+.scenario.time\nExample: VZTAB.201325.20180709135826.SPECIALVZ.202119.20190306133531.3.2",
+      "type": "string"
+    },
+    {
+      "name": "actions",
+      "doc": "",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "Action",
+          "doc": "Maps a product to an action.",
+          "fields": [
+            {
+              "name": "sortingProduct",
+              "doc": "",
+              "default": null,
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "name": "sorts",
+              "doc": "",
+              "type": [
+                "null",
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "record",
+                    "name": "Sort",
+                    "doc": "Sort/sequence this product to an OutletGroup. For dynamic outletGroups\nspecify the relative position withing Group",
+                    "fields": [
+                      {
+                        "name": "outletGroup",
+                        "doc": "A reference on the name of the outlet group.\nDas Virtuelle Ziel fasst eine Liste von Endstellen zu einem logischen Sortierziel, auch Endstellengruppe genannt, zusammen.",
+                        "type": "int"
+                      },
+                      {
+                        "name": "position",
+                        "doc": "Die Endstellen-Position dient zum Positionieren der Anzeige auf dem Display der Endstelle und hat die Bedeutung des Rx-Stellplatzes an der Endstelle.\nDie Endstellen-Position ist eine bis zu einstellige positive Zahl. Eine Endstellengruppe hat max. neun Positionen.",
+                        "default": null,
+                        "type": [
+                          "null",
+                          "int"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "default": null
+            },
+            {
+              "name": "prints",
+              "doc": "",
+              "type": [
+                "null",
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "record",
+                    "name": "Print",
+                    "doc": "Describes what shall be printed on a label or a display for mail\nitems that fall into a given Product.",
+                    "fields": [
+                      {
+                        "name": "location",
+                        "doc": "Specifies the print Location i.e. where action is performed. Typical locations\nare Label-Printer or Display.",
+                        "type": [
+                          {
+                            "type": "enum",
+                            "name": "LocationType",
+                            "symbols": [
+                              "UNKNOWN",
+                              "LABEL_PRINTER",
+                              "DISPLAY"
+                            ]
+                          },
+                          "string"
+                        ]
+                      },
+                      {
+                        "name": "format",
+                        "doc": "Text zur Anzeige auf dem Display der Endstelle\nBeispiele: Bezirk/Tour, Plz, Rx-Stellplatz, Zielzentrum",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "default": null
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

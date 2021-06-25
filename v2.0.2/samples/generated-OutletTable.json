@@ -1,0 +1,95 @@
+{
+    "timestamp": "2018-03-05T15:11:28.000Z",
+    "name": "ZIELTAB.201446.20180222100409",
+    "outletGroups": [{
+        "name": 300,
+        "tray": 1,
+        "outlets": [{
+            "name": 2220
+        }]
+    }, {
+        "name": 39,
+        "tray": 1,
+        "outlets": [{
+            "name": 1220
+        }]
+    }, {
+        "name": 5,
+        "tray": 1,
+        "specialType": "STD_AREA",
+        "outlets": [{
+            "name": 1110
+        }, {
+            "name": 1120
+        }, {
+            "name": 1130
+        }]
+    }, {
+        "name": 685,
+        "tray": 1,
+        "specialType": "MCS_AREA",
+        "outlets": [{
+            "name": 2800
+        }, {
+            "name": 2810
+        }]
+    }, {
+        "name": 699,
+        "tray": 1,
+        "specialType": "REJECT_AREA",
+        "outlets": [{
+            "name": 2110,
+            "priority": 1
+        }, {
+            "name": 2120,
+            "priority": 2
+        }, {
+            "name": 2130,
+            "priority": 3
+        }]
+    }, {
+        "name": 799,
+        "tray": 1,
+        "specialType": "REJECT_AREA",
+        "outlets": [{
+            "name": 3920,
+            "priority": 2
+        }, {
+            "name": 3930,
+            "priority": 3
+        }]
+    }, {
+        "name": 899,
+        "tray": 1,
+        "specialType": "REJECT_AREA",
+        "outlets": [{
+            "name": 3970,
+            "priority": 1
+        }, {
+            "name": 3980,
+            "priority": 1
+        }, {
+            "name": 3990,
+            "priority": 2
+        }]
+    }, {
+        "name": 662,
+        "tray": 1,
+        "outlets": [{
+            "name": 3110,
+            "priority": 1
+        }, {
+            "name": 3120,
+            "priority": 1
+        }, {
+            "name": 3130,
+            "priority": 1
+        }, {
+            "name": 3140,
+            "priority": 2
+        }, {
+            "name": 3150,
+            "priority": 3
+        }]
+    }]
+}

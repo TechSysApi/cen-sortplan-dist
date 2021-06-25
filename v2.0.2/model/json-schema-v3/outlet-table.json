@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-03/schema#",
+  "definitions": {},
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "description": "The date+timstamp which identifies the point in time, where the information was generated, including milliseconds.",
+      "format": "date-time",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the outlet table.\nFormat: [tablename.key.timestamp]+\nExample: ZIELTAB.201446.20180222100409",
+      "maxLength": 100,
+      "required": true
+    },
+    "outletGroups": {
+      "type": "array",
+      "items": {
+        "$ref": "outlet-group.json"
+      },
+      "required": true
+    }
+  },
+  "additionalProperties": false,
+  "id": "OutletTable",
+  "dotnetNamespace": "Ch.Post.PL.Api.CenSortplan.V1"
+}

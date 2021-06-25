@@ -1,0 +1,94 @@
+{
+  "namespace": "OutletTable",
+  "name": "main",
+  "type": "record",
+  "fields": [
+    {
+      "name": "timestamp",
+      "doc": "The date+timstamp which identifies the point in time, where the information was generated, including milliseconds.",
+      "type": "string"
+    },
+    {
+      "name": "name",
+      "doc": "The name of the outlet table.\nFormat: [tablename.key.timestamp]+\nExample: ZIELTAB.201446.20180222100409",
+      "type": "string"
+    },
+    {
+      "name": "outletGroups",
+      "doc": "",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "OutletGroup",
+          "doc": "Groupings of physical outlets for each sequencing pass.",
+          "fields": [
+            {
+              "name": "name",
+              "doc": "A unique key inside the sort plan to identify this occurrence of OutletGroup.\nBezeichnung für eine Gruppe der Endstellen. Dateninhalt ist das Virtuelle Ziel. Das virtuelle Ziel ist eine 3-stellige Zahl.",
+              "type": "int"
+            },
+            {
+              "name": "tray",
+              "doc": "Tray number. Feld nur relevant, wenn mehrere Sorter eingesetzt werden.\nNummer vom Sorter. Feld nur relevant, wenn mehrere Sorter eingesetzt werden.",
+              "default": null,
+              "type": [
+                "null",
+                "int"
+              ]
+            },
+            {
+              "name": "specialType",
+              "doc": "Defines the usage made of the outlet group.",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "OutletArea",
+                  "symbols": [
+                    "UNKNOWN",
+                    "STD_AREA",
+                    "SEQ_AREA",
+                    "REJECT_AREA",
+                    "SEQ_OV_AREA",
+                    "MCS_AREA"
+                  ]
+                },
+                "string"
+              ],
+              "default": null
+            },
+            {
+              "name": "outlets",
+              "doc": "The list of physical outlets to be used.",
+              "type": {
+                "type": "array",
+                "items": {
+                  "type": "record",
+                  "name": "Outlet",
+                  "doc": "Physical outlet.",
+                  "fields": [
+                    {
+                      "name": "name",
+                      "doc": "The name of the outlet.",
+                      "type": "int"
+                    },
+                    {
+                      "name": "priority",
+                      "doc": "Priority of the outlet. Defaults to 1=Highest Priority.\n\nIf multiple outlets have the same priority, round robin is applied. Lower priority outlets are only used\nwhen higher priority outlets are full.",
+                      "default": null,
+                      "type": [
+                        "null",
+                        "int"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

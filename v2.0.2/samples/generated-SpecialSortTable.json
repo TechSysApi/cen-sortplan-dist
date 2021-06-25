@@ -1,0 +1,60 @@
+{
+    "timestamp": "2018-03-05T15:11:28.000Z",
+    "name": "SPECIALVZ.201446.20180222100409",
+    "sortingProducts": [{
+        "name": "799",
+        "specialSorts": [{
+            "name": "ITEM_NO_READ"
+        }, {
+            "name": "ITEM_MULTIPLE_READ"
+        }, {
+            "name": "ITEM_STRAY"
+        }, {
+            "name": "ITEM_INDUCTION_ERROR"
+        }, {
+            "name": "ITEM_DISCHARGE_ERROR"
+        }, {
+            "name": "ITEM_ERROR"
+        }, {
+            "name": "ITEM_TRACKING_ERROR"
+        }, {
+            "name": "ITEM_OCCUPIED_TWICE_ERROR"
+        }, {
+            "name": "ITEM_DISAPPEARED"
+        }]
+    }, {
+        "name": "899",
+        "specialSorts": [{
+            "name": "MAX_RECIRCULATION"
+        }, {
+            "name": "SCANNER_TIMEOUT"
+        }, {
+            "name": "OUTLET_NOT_AVAILABLE"
+        }, {
+            "name": "OUTLET_UNKNOWN"
+        }, {
+            "name": "UNDEFINED_ERROR"
+        }, {
+            "name": "NO_CAPACITY"
+        }, {
+            "name": "DIMENSION_ERROR"
+        }, {
+            "name": "WEIGHT_ERROR"
+        }, {
+            "name": "SORTPLAN_ERROR"
+        }, {
+            "name": "DIRECT_SORTING_MODE"
+        }]
+    }],
+    "actions": [{
+        "sortingProduct": "799",
+        "sorts": [{
+            "outletGroup": 799
+        }]
+    }, {
+        "sortingProduct": "899",
+        "sorts": [{
+            "outletGroup": 899
+        }]
+    }]
+}
