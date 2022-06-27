@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {},
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "description": "The date+timstamp which identifies the point in time, where the information was generated, including milliseconds.",
+      "format": "date-time"
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the special sort table\nFormat: tablename.key.timestamp\nExample: SPECIALVZ.201446.20180222100409",
+      "maxLength": 40
+    },
+    "sortingProducts": {
+      "type": "array",
+      "items": {
+        "$ref": "sorting-product.json"
+      },
+      "minItems": 1
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "action.json"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "timestamp",
+    "name",
+    "sortingProducts",
+    "actions"
+  ],
+  "additionalProperties": false,
+  "id": "SpecialSortTable",
+  "dotnetNamespace": "Ch.Post.PL.Api.CenSortplan.V1"
+}

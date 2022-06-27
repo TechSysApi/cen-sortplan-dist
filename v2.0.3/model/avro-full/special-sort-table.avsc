@@ -1,0 +1,184 @@
+{
+  "namespace": "SpecialSortTable",
+  "name": "main",
+  "type": "record",
+  "fields": [
+    {
+      "name": "timestamp",
+      "doc": "The date+timstamp which identifies the point in time, where the information was generated, including milliseconds.",
+      "type": "string"
+    },
+    {
+      "name": "name",
+      "doc": "The name of the special sort table\nFormat: tablename.key.timestamp\nExample: SPECIALVZ.201446.20180222100409",
+      "type": "string"
+    },
+    {
+      "name": "sortingProducts",
+      "doc": "",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "SortingProduct",
+          "doc": "Sorting product describes \"what the machine produces\". This is typically the content of an Outlet.\nThe sorting product can be are logistics destinations and special sorts",
+          "fields": [
+            {
+              "name": "name",
+              "doc": "The name of the sorting product.",
+              "type": "string"
+            },
+            {
+              "name": "specialSorts",
+              "doc": "Special logistics and technical destinations. Typical examples are “REJECT” or “OVERFLOW”.",
+              "type": [
+                "null",
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "record",
+                    "name": "SpecialSort",
+                    "doc": "Special logistics and technical destinations. Typical examples are “REJECT” or “OVERFLOW”.",
+                    "fields": [
+                      {
+                        "name": "name",
+                        "doc": "The name of the special sort.",
+                        "type": [
+                          {
+                            "type": "enum",
+                            "name": "SortReason",
+                            "symbols": [
+                              "UNKNOWN",
+                              "OK",
+                              "MAX_RECIRCULATION",
+                              "ITEM_NO_READ",
+                              "ITEM_MULTIPLE_READ",
+                              "SCANNER_TIMEOUT",
+                              "ITEM_STRAY",
+                              "ITEM_INDUCTION_ERROR",
+                              "ITEM_DISCHARGE_ERROR",
+                              "ITEM_ERROR",
+                              "ITEM_TRACKING_ERROR",
+                              "ITEM_OCCUPIED_TWICE_ERROR",
+                              "ITEM_DISAPPEARED",
+                              "OUTLET_NOT_AVAILABLE",
+                              "OUTLET_UNKNOWN",
+                              "UNDEFINED_ERROR",
+                              "NO_CAPACITY",
+                              "DIMENSION_ERROR",
+                              "WEIGHT_ERROR",
+                              "SORTPLAN_ERROR",
+                              "DIRECT_SORTING_MODE",
+                              "ITEM_NO_SORTCODE",
+                              "OUTLET_MISSED"
+                            ]
+                          },
+                          "string"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "default": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "actions",
+      "doc": "",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "Action",
+          "doc": "Maps a product to an action.",
+          "fields": [
+            {
+              "name": "sortingProduct",
+              "doc": "",
+              "default": null,
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "name": "sorts",
+              "doc": "",
+              "type": [
+                "null",
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "record",
+                    "name": "Sort",
+                    "doc": "Sort/sequence this product to an OutletGroup. For dynamic outletGroups\nspecify the relative position withing Group",
+                    "fields": [
+                      {
+                        "name": "outletGroup",
+                        "doc": "A reference on the name of the outlet group.\nDas Virtuelle Ziel fasst eine Liste von Endstellen zu einem logischen Sortierziel, auch Endstellengruppe genannt, zusammen.",
+                        "type": "int"
+                      },
+                      {
+                        "name": "position",
+                        "doc": "Die Endstellen-Position dient zum Positionieren der Anzeige auf dem Display der Endstelle und hat die Bedeutung des Rx-Stellplatzes an der Endstelle.\nDie Endstellen-Position ist eine bis zu einstellige positive Zahl. Eine Endstellengruppe hat max. neun Positionen.",
+                        "default": null,
+                        "type": [
+                          "null",
+                          "int"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "default": null
+            },
+            {
+              "name": "prints",
+              "doc": "",
+              "type": [
+                "null",
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "record",
+                    "name": "Print",
+                    "doc": "Describes what shall be printed on a label or a display for mail\nitems that fall into a given Product.",
+                    "fields": [
+                      {
+                        "name": "location",
+                        "doc": "Specifies the print Location i.e. where action is performed. Typical locations\nare Label-Printer or Display.",
+                        "type": [
+                          {
+                            "type": "enum",
+                            "name": "LocationType",
+                            "symbols": [
+                              "UNKNOWN",
+                              "LABEL_PRINTER",
+                              "DISPLAY"
+                            ]
+                          },
+                          "string"
+                        ]
+                      },
+                      {
+                        "name": "format",
+                        "doc": "Text zur Anzeige auf dem Display der Endstelle\nBeispiele: Bezirk/Tour, Plz, Rx-Stellplatz, Zielzentrum",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "default": null
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
